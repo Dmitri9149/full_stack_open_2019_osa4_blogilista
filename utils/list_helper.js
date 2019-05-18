@@ -1,3 +1,5 @@
+var _ = require('lodash')
+
 const dummy = (blogs) => {
   return 1
 }
@@ -31,6 +33,14 @@ const favoriteBlog = blogs => {
 
 }
 
+const mostBlogs = blogs => {
+  const collectionA = _.groupBY(blogs, author)
+  const collectionB = _.forEach(collectionA, totalLikes(value))
+  const collectionC = _.sortBy(collectionC, [_.identity])
+  return {
+    author:collecionC[0].
+  }
+}
 
 
 module.exports = {
