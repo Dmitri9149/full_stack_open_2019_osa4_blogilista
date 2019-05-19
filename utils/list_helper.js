@@ -33,7 +33,17 @@ const favoriteBlog = blogs => {
 
 }
 
-const favoriteBlog2 = blogs => {
+
+const groupByAuthorCollection = blogs => {
+  const collectionA = _.groupBy(blogs, function(o) {return o.author})
+  console.log('collectionA', collectionA)
+  const collectionB = _.map(collectionA, function(value, key){ return [ key, value.length, totalLikes(value) ]  } )
+  console.log('collectionB', collectionB)
+  return collectionB
+}
+
+const mostBlogs = blogs => {
+  const collection = groupByAuthorCollection(blogs)
   const reducer = (sum, blog) => {
     if(sum[1] < blog[1]) {
       return blog
@@ -42,21 +52,32 @@ const favoriteBlog2 = blogs => {
     }
   }
 
-  return blogs.length === 0
+  return collection.length === 0
     ? {}
     : {
-      author:blogs.reduce(reducer, blogs[0])[0],
-      blogs:blogs.reduce(reducer, blogs[0])[1]
+      author:collection.reduce(reducer, collection[0])[0],
+      blogs:collection.reduce(reducer, collection[0])[1]
     }
 
 }
 
-const mostBlogs = blogs => {
-  const collectionA = _.groupBy(blogs, function(o) {return o.author})
-  console.log('collectionA', collectionA)
-  const collectionB = _.map(collectionA, function(value, key){return [ key, value.length ]  } )
-  console.log('collectionB', collectionB)
-  return favoriteBlog2 (collectionB)
+const mostLikes = blogs => {
+  const collection = groupByAuthorCollection(blogs)
+  const reducer = (sum, blog) => {
+    if(sum[2] < blog[2]) {
+      return blog
+    } else {
+      return sum
+    }
+  }
+
+  return collection.length === 0
+    ? {}
+    : {
+      author:collection.reduce(reducer, collection[0])[0],
+      likes:collection.reduce(reducer, collection[0])[2]
+    }
+
 }
 
 
@@ -64,5 +85,6 @@ module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
-  mostBlogs
+  mostBlogs,
+  mostLikes
 }
