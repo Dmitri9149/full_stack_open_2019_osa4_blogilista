@@ -2,7 +2,7 @@ const config = require('./utils/config')
 const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
-const notesRouter = require('./controllers/blogs')
+const blogsRouter = require('./controllers/blogs')
 const mongoose = require('mongoose')
 
 
@@ -16,7 +16,7 @@ mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true })
 
 
 app.use(bodyParser.json())
-app.use('/api/blogs', notesRouter)
+app.use('/api/blogs', blogsRouter)
 
 
 module.exports = app
