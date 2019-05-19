@@ -1,3 +1,5 @@
+const mongoose = require('mongoose')
+
 const listHelper = require('../utils/list_helper')
 
 test('dummy returns one', () => {
@@ -376,6 +378,10 @@ describe('most likes', () => {
     expect(result).toEqual(elemForBigBlog)
   })
 
+})
+
+afterAll(() => {
+  mongoose.connection.close()
 })
 
 
