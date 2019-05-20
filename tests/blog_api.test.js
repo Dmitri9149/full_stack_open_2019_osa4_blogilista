@@ -46,16 +46,20 @@ test('notes are returned as json', async () => {
     .expect('Content-Type', /application\/json/)
 })
 
-test('there are three blogss', async () => {
+test('all blogs are returned', async () => {
   const response = await api.get('/api/blogs')
 
-  expect(response.body.length).toBe(3)
+  expect(response.body.length).toBe(initialBlogs.length)
 })
 
-test('the first blog is of Edsger W. Dijkstra', async () => {
+test('a specific blog is within the returned blogss', async () => {
   const response = await api.get('/api/blogs')
 
-  expect(response.body[0].author).toBe('Edsger W. Dijkstra')
+  const authors = response.body.map(r => r.author)
+
+  expect(authors).toContain(
+    'Edsger W. Dijkstra'
+  )
 })
 
 afterAll(() => {
