@@ -62,6 +62,14 @@ test('a specific blog is within the returned blogss', async () => {
   )
 })
 
+test('identification field has name as id ', async () => {
+  const blogs = await Blog.find({})
+  const firstBlogId = blogs.map(r => r.toJSON())[0].id
+
+  expect(firstBlogId).toBeDefined()
+
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
