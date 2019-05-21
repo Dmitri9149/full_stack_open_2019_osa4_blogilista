@@ -78,8 +78,6 @@ test('a valid note can be added ', async () => {
     url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
     likes: 2
   }
-
-
   await api
     .post('/api/blogs')
     .send(newBlog)
