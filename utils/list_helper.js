@@ -36,9 +36,7 @@ const favoriteBlog = blogs => {
 
 const groupByAuthorCollection = blogs => {
   const collectionA = _.groupBy(blogs, function(o) {return o.author})
-  console.log('collectionA', collectionA)
   const collectionB = _.map(collectionA, function(value, key){ return [ key, value.length, totalLikes(value) ]  } )
-  console.log('collectionB', collectionB)
   return collectionB
 }
 
