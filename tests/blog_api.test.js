@@ -51,7 +51,7 @@ test('identification field has name as id ', async () => {
 
 })
 
-test('a valid note can be added ', async () => {
+test('a valid blog can be added ', async () => {
 
   const newBlog = {
     title: 'Type wars',
@@ -66,12 +66,35 @@ test('a valid note can be added ', async () => {
     .expect('Content-Type', /application\/json/)
 
   const blogsAtEnd = await helper.blogsInDb()
-  expect(blogsAtEnd.length).toBe(helper.initialBlogs.length + 1)
+  const lengthAtEnd = blogsAtEnd.length
+  expect(lengthAtEnd).toBe(helper.initialBlogs.length + 1)
 
   const titles = blogsAtEnd.map(n => n.title)
   expect(titles).toContain(
     'Type wars'
   )
+})
+
+test('a blog with undefined likes can be added with likes set to 0 ', async () => {
+
+  const dummyBlog = {
+    title: 'Just for testing',
+    author: 'Dmitri',
+    url: 'http://dummy.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
+    likes: 0
+  }
+  await api
+    .post('/api/blogs')
+    .send(dummyBlog)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  const lengthAtEnd = blogsAtEnd.length
+  expect(lengthAtEnd).toBe(helper.initialBlogs.length + 1)
+
+  const likes = blogsAtEnd.map(n => n.likes)
+  expect(likes[lengthAtEnd - 1]).toBe(0)
 })
 
 afterAll(() => {
