@@ -1,9 +1,13 @@
 const mongoose = require('mongoose')
 
-const blogSchema = mongoose.Schema({
-  title: String,
+const blogSchema = new mongoose.Schema({
+  title: {
+    type:String
+  },
   author: String,
-  url: String,
+  url: {
+    type:String
+  },
   likes: Number
 })
 

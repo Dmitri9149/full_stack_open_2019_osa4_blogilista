@@ -97,6 +97,24 @@ test('a blog with undefined likes can be added with likes set to 0 ', async () =
   expect(likes[lengthAtEnd - 1]).toBe(0)
 })
 
+test('blog without title and url is not added', async () => {
+
+  const newBlog = {
+    author: 'Tutti',
+    likes:1000000
+  }
+
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+
+  const response = await api.get('/api/blogs')
+
+  expect(response.body.length).toBe(helper.initialBlogs.length)
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })

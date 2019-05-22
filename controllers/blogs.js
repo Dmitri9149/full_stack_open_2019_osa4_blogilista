@@ -17,8 +17,13 @@ blogsRouter.post('/', async (request, response, next) => {
     likes:body.likes === undefined ? 0 : body.likes
   })
   try {
-    const savedBlog = await blog.save()
-    response.json(savedBlog.toJSON())
+
+    if (blog.title === undefined && blog.url === undefined) {
+      await response.status(400).end()
+    } else {
+      const savedBlog = await blog.save()
+      response.json(savedBlog.toJSON())
+    }
   } catch(exception) {
     next(exception)
   }
