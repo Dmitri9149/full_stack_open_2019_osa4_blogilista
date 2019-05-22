@@ -2,11 +2,13 @@ const mongoose = require('mongoose')
 
 const blogSchema = new mongoose.Schema({
   title: {
-    type:String
+    type:String,
+    requaried:true
   },
   author: String,
   url: {
-    type:String
+    type:String,
+    requaried:true
   },
   likes: Number
 })
