@@ -5,22 +5,18 @@ const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
 
-
+describe('when there sre initially some blogs saved', () => {
 
 beforeEach(async () => {
-  await Blog.deleteMany({})
+  await Blog.remove({})
 
-  let blogObject = new Blog(helper.initialBlogs[0])
-  await blogObject.save()
-
-  blogObject = new Blog(helper.initialBlogs[1])
-  await blogObject.save()
-
-  blogObject = new Blog(helper.initialBlogs[2])
-  await blogObject.save()
+  const blogObjects = helper.initialBlogs
+    .map(blog => new Blog(blog))
+  const promiseArray = blogObjects.map(blog => blog.save())
+  await Promise.all(promiseArray)
 })
 
-test('notes are returned as json', async () => {
+test('blogs are returned as json', async () => {
   await api
     .get('/api/blogs')
     .expect(200)
@@ -51,6 +47,10 @@ test('identification field has name as id ', async () => {
 
 })
 
+})
+
+
+describe('addition of a new note', () => {
 test('a valid blog can be added ', async () => {
 
   const newBlog = {
@@ -59,6 +59,11 @@ test('a valid blog can be added ', async () => {
     url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
     likes: 2
   }
+
+  const blogsBefore = await helper.blogsInDb()
+  console.log('blogsBefore = ', blogsBefore)
+  const lengthBefore = blogsBefore.length
+
   await api
     .post('/api/blogs')
     .send(newBlog)
@@ -67,7 +72,7 @@ test('a valid blog can be added ', async () => {
 
   const blogsAtEnd = await helper.blogsInDb()
   const lengthAtEnd = blogsAtEnd.length
-  expect(lengthAtEnd).toBe(helper.initialBlogs.length + 1)
+  expect(lengthAtEnd).toBe(lengthBefore + 1)
 
   const titles = blogsAtEnd.map(n => n.title)
   expect(titles).toContain(
@@ -80,21 +85,29 @@ test('a blog with undefined likes can be added with likes set to 0 ', async () =
   const dummyBlog = {
     title: 'Just for testing',
     author: 'Dmitri',
-    url: 'http://dummy.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
-    likes: 0
+    url: 'http://dummy.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html'
   }
+
+  console.log('LIKES !!!!!!!!!!!',  dummyBlog.likes)
+
+  const blogsBefore = await helper.blogsInDb()
+  console.log('blogsBefore = ', blogsBefore)
+  const lengthBefore = blogsBefore.length
+
   await api
     .post('/api/blogs')
     .send(dummyBlog)
     .expect(200)
     .expect('Content-Type', /application\/json/)
 
-  const blogsAtEnd = await helper.blogsInDb()
-  const lengthAtEnd = blogsAtEnd.length
-  expect(lengthAtEnd).toBe(helper.initialBlogs.length + 1)
+  const blogsAfter = await helper.blogsInDb()
+  console.log('blogsAfter = ', blogsAfter)
+  const lengthAfter = blogsAfter.length
+  console.log(lengthAfter)
+  expect(lengthAfter).toBe(lengthBefore + 1)
 
-  const likes = blogsAtEnd.map(n => n.likes)
-  expect(likes[lengthAtEnd - 1]).toBe(0)
+  const likes = blogsAfter.map(n => n.likes)
+  expect(likes[lengthAfter - 1]).toBe(0)
 })
 
 test('blog without title and url is not added', async () => {
@@ -103,16 +116,25 @@ test('blog without title and url is not added', async () => {
     author: 'Tutti',
     likes:1000000
   }
+  console.log("Without Titler and Url !!!!!!!", newBlog.title, newBlog.url)
 
+  const blogsBefore = await helper.blogsInDb()
+  const lengthBefore = blogsBefore.length
+  console.log('lengthBefore = ', lengthBefore)
 
   await api
     .post('/api/blogs')
     .send(newBlog)
     .expect(400)
 
-  const response = await api.get('/api/blogs')
+  const blogsAfter = await helper.blogsInDb()
+  console.log('blogsAfter (title)= ', blogsAfter)
+  const lengthAfter = blogsAfter.length
+  console.log('lengthAfter = ', lengthAfter)
 
-  expect(response.body.length).toBe(helper.initialBlogs.length)
+  expect(lengthAfter).toBe(lengthBefore)
+})
+
 })
 
 describe('deletion of a blog', () => {
@@ -127,7 +149,7 @@ describe('deletion of a blog', () => {
     const blogsAtEnd = await helper.blogsInDb()
 
     expect(blogsAtEnd.length).toBe(
-      helper.initialBlogs.length - 1
+      blogsAtStart.length - 1
     )
 
     const titles = blogsAtEnd.map(r => r.title)
