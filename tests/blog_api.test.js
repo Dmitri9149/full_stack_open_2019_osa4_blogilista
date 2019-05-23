@@ -7,127 +7,127 @@ const Blog = require('../models/blog')
 
 describe('when there sre initially some blogs saved', () => {
 
-beforeEach(async () => {
-  await Blog.remove({})
+  beforeEach(async () => {
+    await Blog.remove({})
 
-  const blogObjects = helper.initialBlogs
-    .map(blog => new Blog(blog))
-  const promiseArray = blogObjects.map(blog => blog.save())
-  await Promise.all(promiseArray)
-})
+    const blogObjects = helper.initialBlogs
+      .map(blog => new Blog(blog))
+    const promiseArray = blogObjects.map(blog => blog.save())
+    await Promise.all(promiseArray)
+  })
 
-test('blogs are returned as json', async () => {
-  await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
-})
+  test('blogs are returned as json', async () => {
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  })
 
-test('all blogs are returned', async () => {
-  const response = await api.get('/api/blogs')
+  test('all blogs are returned', async () => {
+    const response = await api.get('/api/blogs')
 
-  expect(response.body.length).toBe(helper.initialBlogs.length)
-})
+    expect(response.body.length).toBe(helper.initialBlogs.length)
+  })
 
-test('a specific blog is within the returned blogss', async () => {
-  const response = await api.get('/api/blogs')
+  test('a specific blog is within the returned blogss', async () => {
+    const response = await api.get('/api/blogs')
 
-  const authors = response.body.map(r => r.author)
+    const authors = response.body.map(r => r.author)
 
-  expect(authors).toContain(
-    'Edsger W. Dijkstra'
-  )
-})
+    expect(authors).toContain(
+      'Edsger W. Dijkstra'
+    )
+  })
 
-test('identification field has name as id ', async () => {
-  const blogs = await Blog.find({})
-  const firstBlogId = blogs.map(r => r.toJSON())[0].id
+  test('identification field has name as id ', async () => {
+    const blogs = await Blog.find({})
+    const firstBlogId = blogs.map(r => r.toJSON())[0].id
 
-  expect(firstBlogId).toBeDefined()
+   expect(firstBlogId).toBeDefined()
 
-})
+  })
 
 })
 
 
 describe('addition of a new note', () => {
-test('a valid blog can be added ', async () => {
+  test('a valid blog can be added ', async () => {
 
-  const newBlog = {
-    title: 'Type wars',
-    author: 'Robert C. Martin',
-    url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
-    likes: 2
-  }
+    const newBlog = {
+      title: 'Type wars',
+      author: 'Robert C. Martin',
+      url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
+      likes: 2
+    }
 
-  const blogsBefore = await helper.blogsInDb()
+    const blogsBefore = await helper.blogsInDb()
 
-  const lengthBefore = blogsBefore.length
+    const lengthBefore = blogsBefore.length
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
 
-  const blogsAtEnd = await helper.blogsInDb()
-  const lengthAtEnd = blogsAtEnd.length
-  expect(lengthAtEnd).toBe(lengthBefore + 1)
+    const blogsAtEnd = await helper.blogsInDb()
+    const lengthAtEnd = blogsAtEnd.length
+    expect(lengthAtEnd).toBe(lengthBefore + 1)
 
-  const titles = blogsAtEnd.map(n => n.title)
-  expect(titles).toContain(
-    'Type wars'
-  )
-})
+    const titles = blogsAtEnd.map(n => n.title)
+    expect(titles).toContain(
+      'Type wars'
+    )
+  })
 
-test('a blog with undefined likes can be added with likes set to 0 ', async () => {
+  test('a blog with undefined likes can be added with likes set to 0 ', async () => {
 
-  const dummyBlog = {
-    title: 'Just for testing',
-    author: 'Dmitri',
-    url: 'http://dummy.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html'
-  }
+    const dummyBlog = {
+      title: 'Just for testing',
+      author: 'Dmitri',
+      url: 'http://dummy.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html'
+    }
 
 
-  const blogsBefore = await helper.blogsInDb()
+   const blogsBefore = await helper.blogsInDb()
 
-  const lengthBefore = blogsBefore.length
+    const lengthBefore = blogsBefore.length
 
-  await api
-    .post('/api/blogs')
-    .send(dummyBlog)
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
+    await api
+      .post('/api/blogs')
+      .send(dummyBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
 
-  const blogsAfter = await helper.blogsInDb()
-  const lengthAfter = blogsAfter.length
-  expect(lengthAfter).toBe(lengthBefore + 1)
+    const blogsAfter = await helper.blogsInDb()
+    const lengthAfter = blogsAfter.length
+    expect(lengthAfter).toBe(lengthBefore + 1)
 
-  const likes = blogsAfter.map(n => n.likes)
-  expect(likes[lengthAfter - 1]).toBe(0)
-})
+    const likes = blogsAfter.map(n => n.likes)
+    expect(likes[lengthAfter - 1]).toBe(0)
+  })
 
-test('blog without title and url is not added', async () => {
+  test('blog without title and url is not added', async () => {
 
-  const newBlog = {
-    author: 'Tutti',
-    likes:1000000
-  }
+    const newBlog = {
+      author: 'Tutti',
+      likes:1000000
+    }
 
-  const blogsBefore = await helper.blogsInDb()
-  const lengthBefore = blogsBefore.length
+    const blogsBefore = await helper.blogsInDb()
+    const lengthBefore = blogsBefore.length
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(400)
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
 
-  const blogsAfter = await helper.blogsInDb()
- 
-  const lengthAfter = blogsAfter.length
+    const blogsAfter = await helper.blogsInDb()
 
-  expect(lengthAfter).toBe(lengthBefore)
-})
+    const lengthAfter = blogsAfter.length
+
+    expect(lengthAfter).toBe(lengthBefore)
+  })
 
 })
 
