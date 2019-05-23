@@ -61,7 +61,7 @@ test('a valid blog can be added ', async () => {
   }
 
   const blogsBefore = await helper.blogsInDb()
-  console.log('blogsBefore = ', blogsBefore)
+
   const lengthBefore = blogsBefore.length
 
   await api
@@ -88,10 +88,9 @@ test('a blog with undefined likes can be added with likes set to 0 ', async () =
     url: 'http://dummy.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html'
   }
 
-  console.log('LIKES !!!!!!!!!!!',  dummyBlog.likes)
 
   const blogsBefore = await helper.blogsInDb()
-  console.log('blogsBefore = ', blogsBefore)
+
   const lengthBefore = blogsBefore.length
 
   await api
@@ -101,9 +100,7 @@ test('a blog with undefined likes can be added with likes set to 0 ', async () =
     .expect('Content-Type', /application\/json/)
 
   const blogsAfter = await helper.blogsInDb()
-  console.log('blogsAfter = ', blogsAfter)
   const lengthAfter = blogsAfter.length
-  console.log(lengthAfter)
   expect(lengthAfter).toBe(lengthBefore + 1)
 
   const likes = blogsAfter.map(n => n.likes)
@@ -116,11 +113,9 @@ test('blog without title and url is not added', async () => {
     author: 'Tutti',
     likes:1000000
   }
-  console.log("Without Titler and Url !!!!!!!", newBlog.title, newBlog.url)
 
   const blogsBefore = await helper.blogsInDb()
   const lengthBefore = blogsBefore.length
-  console.log('lengthBefore = ', lengthBefore)
 
   await api
     .post('/api/blogs')
@@ -128,9 +123,8 @@ test('blog without title and url is not added', async () => {
     .expect(400)
 
   const blogsAfter = await helper.blogsInDb()
-  console.log('blogsAfter (title)= ', blogsAfter)
+ 
   const lengthAfter = blogsAfter.length
-  console.log('lengthAfter = ', lengthAfter)
 
   expect(lengthAfter).toBe(lengthBefore)
 })
@@ -158,7 +152,7 @@ describe('deletion of a blog', () => {
   })
 })
 
-describe('viewing a specifin blog', () => {
+describe('viewing a specific blog', () => {
 
   test('succeeds with a valid id', async () => {
     const blogsAtStart = await helper.blogsInDb()
@@ -176,8 +170,6 @@ describe('viewing a specifin blog', () => {
   test('fails with statuscode 404 if note does not exist', async () => {
     const validNonexistingId = await helper.nonExistingId()
 
-    console.log(validNonexistingId)
-
     await api
       .get(`/api/blogs/${validNonexistingId}`)
       .expect(404)
@@ -187,19 +179,12 @@ describe('viewing a specifin blog', () => {
   test('fails with statuscode 400 if id is invalid', async () => {
     const invalidId = '5a3d5da59070081a82a3445'
 
-    const aw = await api
+    await api
       .get(`/api/blogs/${invalidId}`)
       .expect(400)
-    console.log('Awwwwa = ', aw.body)
-    console.log(aw.error)
-
-
-
 
   })
 })
-
-
 
 
 afterAll(() => {
