@@ -1,3 +1,6 @@
+const mongoose = require('mongoose')
+mongoose.set('useFindAndModify', false)
+
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 
