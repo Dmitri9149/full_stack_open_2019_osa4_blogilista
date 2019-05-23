@@ -136,6 +136,47 @@ describe('deletion of a blog', () => {
   })
 })
 
+describe('viewing a specifin blog', () => {
+
+  test('succeeds with a valid id', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+
+    const blogToView = blogsAtStart[0]
+
+    const resultBlog = await api
+      .get(`/api/blogs/${blogToView.id}`)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    expect(resultBlog.body).toEqual(blogToView)
+  })
+
+  test('fails with statuscode 404 if note does not exist', async () => {
+    const validNonexistingId = await helper.nonExistingId()
+
+    console.log(validNonexistingId)
+
+    await api
+      .get(`/api/blogs/${validNonexistingId}`)
+      .expect(404)
+
+  })
+
+  test('fails with statuscode 400 if id is invalid', async () => {
+    const invalidId = '5a3d5da59070081a82a3445'
+
+    const aw = await api
+      .get(`/api/blogs/${invalidId}`)
+      .expect(400)
+    console.log('Awwwwa = ', aw.body)
+    console.log(aw.error)
+
+
+
+
+  })
+})
+
 
 
 
