@@ -216,55 +216,6 @@ describe('update of a blog', () => {
     expect(blogsAfter[0].likes).toBe(100)
   })
 
-  test('a blog with undefined likes can be added with likes set to 0 ', async () => {
-
-    const dummyBlog = {
-      title: 'Just for testing',
-      author: 'Dmitri',
-      url: 'http://dummy.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html'
-    }
-
-
-    const blogsBefore = await helper.blogsInDb()
-
-    const lengthBefore = blogsBefore.length
-
-    await api
-      .post('/api/blogs')
-      .send(dummyBlog)
-      .expect(200)
-      .expect('Content-Type', /application\/json/)
-
-    const blogsAfter = await helper.blogsInDb()
-    const lengthAfter = blogsAfter.length
-    expect(lengthAfter).toBe(lengthBefore + 1)
-
-    const likes = blogsAfter.map(n => n.likes)
-    expect(likes[lengthAfter - 1]).toBe(0)
-  })
-
-  test('blog without title and url is not added', async () => {
-
-    const newBlog = {
-      author: 'Tutti',
-      likes:1000000
-    }
-
-    const blogsBefore = await helper.blogsInDb()
-    const lengthBefore = blogsBefore.length
-
-    await api
-      .post('/api/blogs')
-      .send(newBlog)
-      .expect(400)
-
-    const blogsAfter = await helper.blogsInDb()
-
-    const lengthAfter = blogsAfter.length
-
-    expect(lengthAfter).toBe(lengthBefore)
-  })
-
 })
 
 
