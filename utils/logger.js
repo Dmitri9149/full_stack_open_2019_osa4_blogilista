@@ -8,6 +8,10 @@ const error = (...params) => {
   console.error(...params)
 }
 
+const test = () => {
+  console.log('program start runnung')
+}
+
 module.exports = {
-  info, error
+  info, error, test
 }
