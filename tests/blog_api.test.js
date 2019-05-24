@@ -8,7 +8,7 @@ const Blog = require('../models/blog')
 describe('when there sre initially some blogs saved', () => {
 
   beforeEach(async () => {
-    await Blog.remove({})
+    await Blog.deleteMany({})
 
     const blogObjects = helper.initialBlogs
       .map(blog => new Blog(blog))
@@ -43,7 +43,7 @@ describe('when there sre initially some blogs saved', () => {
     const blogs = await Blog.find({})
     const firstBlogId = blogs.map(r => r.toJSON())[0].id
 
-   expect(firstBlogId).toBeDefined()
+    expect(firstBlogId).toBeDefined()
 
   })
 
@@ -89,7 +89,7 @@ describe('addition of a new note', () => {
     }
 
 
-   const blogsBefore = await helper.blogsInDb()
+    const blogsBefore = await helper.blogsInDb()
 
     const lengthBefore = blogsBefore.length
 

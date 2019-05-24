@@ -1,5 +1,8 @@
 const mongoose = require('mongoose')
+
+mongoose.set('useNewUrlParser', true)
 mongoose.set('useFindAndModify', false)
+mongoose.set('useCreateIndex', true)
 
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
@@ -40,9 +43,8 @@ blogsRouter.get('/:id', async (request, response, next) => {
     } else {
       response.status(404).end()
     }
-  } catch(error) {
-    console.log(error)
-    response.status(400).send({ error: 'malformatted id' })
+  } catch(exeption) {
+    next(exeption)
   }
 })
 
@@ -51,7 +53,6 @@ blogsRouter.delete('/:id', async (request, response, next) => {
     await Blog.findByIdAndRemove(request.params.id)
     response.status(204).end()
   } catch (exception) {
-    console.log(exception)
     next(exception)
   }
 })
@@ -67,7 +68,6 @@ blogsRouter.put('/:id', async (request, response, next) => {
     const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
     response.json(updatedBlog.toJSON())
   } catch(exception) {
-    console.log(exception)
     next(exception)
   }
 })
