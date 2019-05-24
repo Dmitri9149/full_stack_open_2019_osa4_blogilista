@@ -1,7 +1,5 @@
 const info = (...params) => {
-  if (process.env.NODE_ENV !== 'test') {
-    console.log(...params)
-  }
+  console.log(...params)
 }
 
 const error = (...params) => {
@@ -9,7 +7,7 @@ const error = (...params) => {
 }
 
 const test = () => {
-  console.log('program start runnung')
+  console.log('program starts runnung')
 }
 
 module.exports = {
