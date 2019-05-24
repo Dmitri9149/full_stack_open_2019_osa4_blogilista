@@ -208,8 +208,6 @@ describe('update of a blog', () => {
       .expect('Content-Type', /application\/json/)
 
     const blogsAfter = await helper.blogsInDb()
-    console.log(blogsAfter)
-    console.log(blogsAfter[0])
     const lengthAfter = blogsAfter.length
     expect(lengthAfter).toBe(lengthBefore)
 
