@@ -1,8 +1,6 @@
 const mongoose = require('mongoose')
 
-mongoose.set('useNewUrlParser', true)
 mongoose.set('useFindAndModify', false)
-mongoose.set('useCreateIndex', true)
 
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
