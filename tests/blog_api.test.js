@@ -227,6 +227,7 @@ describe('when there is initially one user at db', () => {
     const user = new User ({
       username:'root',
       name:'superuser',
+      password:'sekret',
       passwordHash
     })
     await user.save()
