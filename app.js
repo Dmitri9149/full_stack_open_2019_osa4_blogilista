@@ -8,6 +8,7 @@ const logger = require('./utils/logger')
 const mongoose = require('mongoose')
 const usersRouter = require('./controllers/users')
 
+mongoose.set('useCreateIndex', true)
 
 logger.test()
 logger.info('connecting to', config.MONGODB_URI)
