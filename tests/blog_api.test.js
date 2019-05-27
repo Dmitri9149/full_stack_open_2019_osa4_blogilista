@@ -275,6 +275,91 @@ describe('when there is initially one user at db', () => {
     expect(usersAtEnd.length).toBe(usersAtStart.length)
   })
 
+  test('creation fails with proper statuscode and message if username is undefined', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: null,
+      name: 'Superuser',
+      password: 'salainenNull',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('Path `username` is required')
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd.length).toBe(usersAtStart.length)
+  })
+
+  test('creation fails with proper statuscode and message if username is less than 3', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'ro',
+      name: 'SuperuserRo',
+      password: 'salainenRo',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('Path `username` (`ro`) is shorter than')
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd.length).toBe(usersAtStart.length)
+  })
+
+  test('creation fails with proper statuscode and message if password is less than 3', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'rooot',
+      name: 'superuserRooo',
+      password: 'sa',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('password length is less than 3')
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd.length).toBe(usersAtStart.length)
+  })
+
+  test('creation fails with proper statuscode and message if password is undefined', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'roooot',
+      name: 'superuserRoooo'
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('undefined password')
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd.length).toBe(usersAtStart.length)
+  })
+
+
+
 
 })
 
