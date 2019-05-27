@@ -7,6 +7,7 @@ const middleware = require('./utils/middleware')
 const logger = require('./utils/logger')
 const mongoose = require('mongoose')
 const usersRouter = require('./controllers/users')
+const loginRouter = require('./controllers/login')
 
 mongoose.set('useCreateIndex', true)
 
@@ -25,6 +26,7 @@ app.use(bodyParser.json())
 
 app.use(middleware.requestLogger)
 
+app.use('/api/login', loginRouter)
 app.use('/api/blogs', blogsRouter)
 app.use('/api/users', usersRouter)
 
