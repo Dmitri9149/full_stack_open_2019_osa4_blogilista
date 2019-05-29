@@ -67,10 +67,35 @@ blogsRouter.get('/:id', async (request, response, next) => {
   }
 })
 
+const getTokenFrom = request => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+    return authorization.substring(7)
+  }
+  return null
+}
+
 blogsRouter.delete('/:id', async (request, response, next) => {
+
+  const token = getTokenFrom(request)
+
   try {
-    await Blog.findByIdAndRemove(request.params.id)
-    response.status(204).end()
+    const decodedToken = jwt.verify(token, process.env.SECRET)
+    if (!token || !decodedToken.id) {
+      return response.status(401).json({ error: 'token missing or invalid' })
+    }
+
+    const userid = decodedToken.id
+
+    const blog = await Blog.findById(request.params.id)
+
+    if ( blog.user.toString() === userid.toString() ) {
+
+      await Blog.findByIdAndRemove(request.params.id)
+      response.status(204).end()
+    } else {
+      return response.status(400).json({ error: 'token does not correspond to the blog creator' })
+    }
   } catch (exception) {
     next(exception)
   }
